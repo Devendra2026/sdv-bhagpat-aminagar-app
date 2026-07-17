@@ -3,3 +3,4 @@ __pycache__/
 *.py[cod]
 baghpat.db
 .env
+README.md

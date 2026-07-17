@@ -16,11 +16,12 @@ class ContactCreate(ContactBase):
 
 
 class ContactUpdate(ContactBase):
-    pass
+    status: str = Field(default="pending")
 
 
 class ContactResponse(ContactBase):
     id: int
+    status: str = Field(default="pending")
     created_at: datetime
 
     model_config = {"from_attributes": True}

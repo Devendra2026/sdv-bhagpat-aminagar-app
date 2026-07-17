@@ -12,11 +12,11 @@ def create_contact(db: Session, payload: ContactCreate) -> Contact:
     db.refresh(contact)
     return contact
 
-
+# get all contact
 def get_contacts(db: Session) -> list[Contact]:
     return list(db.scalars(select(Contact).order_by(Contact.id.desc())))
 
-
+# get contact by id
 def get_contact(db: Session, contact_id: int) -> Contact | None:
     return db.get(Contact, contact_id)
 

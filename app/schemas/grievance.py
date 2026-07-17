@@ -18,11 +18,12 @@ class GrievanceCreate(GrievanceBase):
 
 
 class GrievanceUpdate(GrievanceBase):
-    pass
+    status: str = Field(default="pending")
 
 
 class GrievanceResponse(GrievanceBase):
     id: int
+    status: str = Field(default="pending")
     created_at: datetime
 
     model_config = {"from_attributes": True}

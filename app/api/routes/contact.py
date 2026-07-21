@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from app.crud import contact as contact_crud
+from app.clerk.auth import require_permission
 from app.db.session import get_db
 from app.schemas.contact import ContactCreate, ContactResponse, ContactUpdate
 
@@ -14,12 +15,19 @@ def create_contact(payload: ContactCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[ContactResponse])
-def list_contacts(db: Session = Depends(get_db)):
+def list_contacts(
+    db: Session = Depends(get_db),
+    _current_user=Depends(require_permission("contact:read")),
+):
     return contact_crud.get_contacts(db)
 
 
 @router.get("/{contact_id}", response_model=ContactResponse)
-def get_contact(contact_id: int, db: Session = Depends(get_db)):
+def get_contact(
+    contact_id: int,
+    db: Session = Depends(get_db),
+    _current_user=Depends(require_permission("contact:read")),
+):
     contact = contact_crud.get_contact(db, contact_id)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
@@ -27,7 +35,12 @@ def get_contact(contact_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{contact_id}", response_model=ContactResponse)
-def update_contact(contact_id: int, payload: ContactUpdate, db: Session = Depends(get_db)):
+def update_contact(
+    contact_id: int,
+    payload: ContactUpdate,
+    db: Session = Depends(get_db),
+    _current_user=Depends(require_permission("contact:update")),
+):
     contact = contact_crud.get_contact(db, contact_id)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
@@ -35,7 +48,11 @@ def update_contact(contact_id: int, payload: ContactUpdate, db: Session = Depend
 
 
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_contact(contact_id: int, db: Session = Depends(get_db)):
+def delete_contact(
+    contact_id: int,
+    db: Session = Depends(get_db),
+    _current_user=Depends(require_permission("contact:delete")),
+):
     contact = contact_crud.get_contact(db, contact_id)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")

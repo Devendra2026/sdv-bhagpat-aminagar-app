@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     database_url: str
     frontend_origin: str = "http://localhost:3000"
     clerk_webhook_secret: str = ""
+    clerk_issuer_url: str = ""
+    clerk_jwks_url: str = ""
+    clerk_secret_key: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

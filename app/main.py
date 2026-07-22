@@ -15,20 +15,22 @@ def create_app() -> FastAPI:
 
     app = FastAPI(title=settings.app_name)
 
+    allowed_origins = [
+        settings.frontend_origin.rstrip("/"),
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        ]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # settings.frontend_origin
+        allow_origins=allowed_origins,  # settings.frontend_origin or use 'frontend domain'
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS",], #use '*' if it restricts some methods  means allowe every methods
+        allow_headers=["Accept","Content-Type","Authorization"],   #use '*' if it restricts some headers  means allowe every header
     )
 
 
     app.include_router(api_router, prefix="/api")
-
-    @app.get("/health")
-    def health_check() -> dict[str, str]:
-        return {"status": "ok"}
 
     return app
 
